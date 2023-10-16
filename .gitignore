@@ -35,6 +35,7 @@ bin/
 .buckd/
 buck-out/
 build-*
+build_*
 *.gcda
 
 # Other files
@@ -54,3 +55,4 @@ compile_commands.json
 .clangd
 perf.data
 perf.data.old
+benchmark/ubuntu-22.04.3-desktop-amd64.iso
