@@ -66,8 +66,8 @@ wasi-sdk-20.0-linux.tar.gz:
 $(DEPS_PATH)/wasi-sdk/bin/clang:
 	if [[ "$(shell uname -p)" == "x86_64" ]]; then \
 		$(MAKE) wasi-sdk-20.0-linux.tar.gz; \
-		mkdir -p $@; \
-		tar -zxf ./wasi-sdk-20.0-linux.tar.gz -C $@ --strip-components 1; \
+		mkdir -p $(DEPS_PATH)/wasi-sdk; \
+		tar -zxf ./wasi-sdk-20.0-linux.tar.gz -C $(DEPS_PATH)/wasi-sdk --strip-components 1; \
 	else \
 		git clone --recursive https://github.com/WebAssembly/wasi-sdk $(DEPS_PATH)/wasi-sdk-src; \
 		cd $(DEPS_PATH)/wasi-sdk-src && NINJA_FLAGS=-v $(MAKE) -j$(PARALLEL_COUNT) package; \
