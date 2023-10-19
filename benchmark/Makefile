@@ -45,8 +45,14 @@ endif
 
 bootstrap:
 	echo "Bootstrapping"
-	sudo apt install -y gcc g++ libc++-dev clang make cmake ninja-build \
-		python3 python3-dev python-is-python3 python3-pip
+	if [ -x "$(shell command -v apt)" ]; then \
+		sudo apt install -y gcc g++ libc++-dev clang make cmake ninja-build python3 python3-dev python-is-python3 python3-pip;
+	elif [ -x "$(shell command -v dnf)" ]; then \
+		sudo dnf install -y gcc g++ libcxx-devel clang make cmake ninja-build python3 python3-devel python-is-python3 python3-pip;
+	else \
+		echo "Unknown installer. apt/dnf not found"; \
+		exit 1; \
+	fi
 	touch ./$@
 
 $(DEPS_PATH)/wabt:
