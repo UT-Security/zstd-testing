@@ -46,9 +46,9 @@ endif
 bootstrap:
 	echo "Bootstrapping"
 	if [ -x "$(shell command -v apt)" ]; then \
-		sudo apt install -y gcc g++ libc++-dev clang make cmake ninja-build python3 python3-dev python-is-python3 python3-pip wget;
+		sudo apt install -y gcc g++ libc++-dev clang make cmake ninja-build python3 python3-dev python-is-python3 python3-pip;
 	elif [ -x "$(shell command -v dnf)" ]; then \
-		sudo dnf install -y gcc g++ libcxx-devel clang make cmake ninja-build python3 python3-devel python-is-python3 python3-pip wget;
+		sudo dnf install -y gcc g++ libcxx-devel clang make cmake ninja-build python3 python3-devel python-is-python3 python3-pip;
 	else \
 		echo "Unknown installer. apt/dnf not found"; \
 		exit 1; \
@@ -74,10 +74,10 @@ $(DEPS_PATH)/wasi-sdk/bin/clang:
 		ln -s $(DEPS_PATH)/wasi-sdk-src/build/install/opt/wasi-sdk/ $(DEPS_PATH)/wasi-sdk; \
 	fi
 
-firefox-118.0.tar.bz2:
-	wget https://ftp.mozilla.org/pub/firefox/releases/118.0/linux-x86_64/en-US/firefox-118.0.tar.bz2
+test_file.txt:
+	dd bs=1024 count=1048576 </dev/urandom > test_file.txt
 
-deps: bootstrap $(DEPS_PATH)/wabt $(DEPS_PATH)/wasi-sdk/bin/clang firefox-118.0.tar.bz2
+deps: bootstrap $(DEPS_PATH)/wabt $(DEPS_PATH)/wasi-sdk/bin/clang test_file.txt
 	touch $@
 
 #####################################
@@ -147,19 +147,19 @@ build: ../build_wasm_$(BUILD_TYPE_DIR)/simple_decompression
 
 test:
 	sleep 1
-	../build_$(BUILD_TYPE_DIR)/simple_compression ./firefox-118.0.tar.bz2
+	../build_$(BUILD_TYPE_DIR)/simple_compression ./test_file.txt
 	sleep 1
-	../build_$(BUILD_TYPE_DIR)/simple_decompression ./firefox-118.0.tar.bz2.zst
-	rm ./firefox-118.0.tar.bz2.zst
+	../build_$(BUILD_TYPE_DIR)/simple_decompression ./test_file.txt.zst
+	rm ./test_file.txt.zst
 	sleep 1
-	../build_conly_$(BUILD_TYPE_DIR)/simple_compression ./firefox-118.0.tar.bz2
+	../build_conly_$(BUILD_TYPE_DIR)/simple_compression ./test_file.txt
 	sleep 1
-	../build_conly_$(BUILD_TYPE_DIR)/simple_decompression ./firefox-118.0.tar.bz2.zst
-	rm ./firefox-118.0.tar.bz2.zst
+	../build_conly_$(BUILD_TYPE_DIR)/simple_decompression ./test_file.txt.zst
+	rm ./test_file.txt.zst
 	sleep 1
-	../build_wasm_$(BUILD_TYPE_DIR)/simple_compression ./firefox-118.0.tar.bz2
+	../build_wasm_$(BUILD_TYPE_DIR)/simple_compression ./test_file.txt
 	sleep 1
-	../build_wasm_$(BUILD_TYPE_DIR)/simple_decompression ./firefox-118.0.tar.bz2.zst
+	../build_wasm_$(BUILD_TYPE_DIR)/simple_decompression ./test_file.txt.zst
 
 clean:
 	rm -rf ../build_*
