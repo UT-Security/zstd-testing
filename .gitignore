@@ -56,3 +56,5 @@ compile_commands.json
 perf.data
 perf.data.old
 benchmark/ubuntu-22.04.3-desktop-amd64.iso
+deps/w*
+benchmark/wasi-sdk-20.0-linux.tar.gz

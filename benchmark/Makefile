@@ -9,14 +9,13 @@ MKFILE_DIR := $(dir $(MKFILE_PATH))
 REPO_PATH=$(MKFILE_DIR)/..
 PARALLEL_COUNT=$(shell nproc)
 
-RLBOX_WASM2C_PATH=$(REPO_PATH)/../rlbox_wasm2c_sandbox
-
-WASM2C_SRC_PATH=$(REPO_PATH)/../wabt
+DEPS_PATH=$(REPO_PATH)/deps
+WASM2C_SRC_PATH=$(DEPS_PATH)/wabt
 
 CC=clang
 CXX=clang++ -std=c++17
 
-WASI_SDK_PATH=$(REPO_PATH)/../wasi-sdk
+WASI_SDK_PATH=$(DEPS_PATH)/wasi-sdk
 WASI_CC=$(WASI_SDK_PATH)/bin/clang --sysroot $(WASI_SDK_PATH)/share/wasi-sysroot/
 WASI_CXX=$(WASI_SDK_PATH)/bin/clang++ --sysroot $(WASI_SDK_PATH)/share/wasi-sysroot/ -std=c++17
 WASI_AR=$(WASI_SDK_PATH)/bin/ar
@@ -42,6 +41,41 @@ BUILD_TYPE_FLAGS=-O3
 BUILD_BINARY_FLAGS=
 endif
 
+#####################################
+
+bootstrap:
+	echo "Bootstrapping"
+	sudo apt install -y gcc g++ libc++-dev clang make cmake ninja-build \
+		python3 python3-dev python-is-python3 python3-pip
+	touch ./$@
+
+$(DEPS_PATH)/wabt:
+	if [ ! -e "$@" ]; then \
+		git clone --recursive https://github.com/WebAssembly/wabt.git $(DEPS_PATH)/wabt; \
+	fi
+
+wasi-sdk-20.0-linux.tar.gz:
+	wget https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-20/wasi-sdk-20.0-linux.tar.gz
+
+$(DEPS_PATH)/wasi-sdk/bin/clang:
+	if [[ "$(shell uname -p)" == "x86_64" ]]; then \
+		$(MAKE) wasi-sdk-20.0-linux.tar.gz; \
+		mkdir -p $@; \
+		tar -zxf ./wasi-sdk-20.0-linux.tar.gz -C $@ --strip-components 1; \
+	else \
+		git clone --recursive https://github.com/WebAssembly/wasi-sdk $(DEPS_PATH)/wasi-sdk-src; \
+		cd $(DEPS_PATH)/wasi-sdk-src && NINJA_FLAGS=-v $(MAKE) -j$(PARALLEL_COUNT) package; \
+		ln -s $(DEPS_PATH)/wasi-sdk-src/build/install/opt/wasi-sdk/ $(DEPS_PATH)/wasi-sdk; \
+	fi
+
+ubuntu-22.04.3-desktop-amd64.iso:
+	wget https://www.releases.ubuntu.com/jammy/ubuntu-22.04.3-desktop-amd64.iso
+
+deps: bootstrap $(DEPS_PATH)/wabt $(DEPS_PATH)/wasi-sdk/bin/clang ubuntu-22.04.3-desktop-amd64.iso
+	touch $@
+
+#####################################
+
 ../build_$(BUILD_TYPE_DIR)/lib/libzstd.a:
 	cmake -S ../build/cmake -B ../build_$(BUILD_TYPE_DIR) -DCMAKE_BUILD_TYPE=$(BUILD_TYPE_CONFIG)
 	cd $(shell dirname "$@") && make -j$(PARALLEL_COUNT) libzstd_static
@@ -66,7 +100,7 @@ endif
 
 #####################################
 
-$(WASM2C_SRC_PATH)/build/wasm2c:
+$(WASM2C_SRC_PATH)/build/wasm2c: deps
 	cmake -S $(WASM2C_SRC_PATH)/ -B $(WASM2C_SRC_PATH)/build -DCMAKE_BUILD_TYPE=Release -DWITH_WASI=ON
 	cd $(WASM2C_SRC_PATH)/build && make -j$(PARALLEL_COUNT)
 
@@ -97,10 +131,7 @@ $(WASM2C_SRC_PATH)/build/wasm2c:
 
 #####################################
 
-ubuntu-22.04.3-desktop-amd64.iso:
-	wget https://www.releases.ubuntu.com/jammy/ubuntu-22.04.3-desktop-amd64.iso
-
-build: ubuntu-22.04.3-desktop-amd64.iso
+build: deps
 build: ../build_$(BUILD_TYPE_DIR)/simple_compression
 build: ../build_$(BUILD_TYPE_DIR)/simple_decompression
 build: ../build_conly_$(BUILD_TYPE_DIR)/simple_compression
