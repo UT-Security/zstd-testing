@@ -81,14 +81,14 @@ $(WASM2C_SRC_PATH)/build/wasm2c:
 
 #####################################
 
-../build_wasm_$(BUILD_TYPE_DIR)/lib/simple_compression.wasm.c: simple_compression.c
+../build_wasm_$(BUILD_TYPE_DIR)/lib/simple_compression.wasm.c: simple_compression.c ../build_wasm_$(BUILD_TYPE_DIR)/lib/libzstd.a
 	$(WASI_CC) $(BUILD_TYPE_FLAGS) $(WASI_CFLAGS) $(WASI_LDFLAGS) -o ../build_wasm_$(BUILD_TYPE_DIR)/lib/simple_compression.wasm simple_compression.c $(EXAMPLE_INCLUDES) -Wl,--whole-archive ../build_wasm_$(BUILD_TYPE_DIR)/lib/libzstd.a -Wl,--no-whole-archive
 	$(WASM2C_SRC_PATH)/build/wasm2c ../build_wasm_$(BUILD_TYPE_DIR)/lib/simple_compression.wasm -o ../build_wasm_$(BUILD_TYPE_DIR)/lib/simple_compression.wasm.c
 
 ../build_wasm_$(BUILD_TYPE_DIR)/simple_compression: wasm-rt-static-runner-simple-compression.c ../build_wasm_$(BUILD_TYPE_DIR)/lib/simple_compression.wasm.c
 	$(CC) $(BUILD_TYPE_FLAGS) $(BUILD_BINARY_FLAGS) -o $@ $(WASM2C_RUNTIME) wasm-rt-static-runner-simple-compression.c ../build_wasm_$(BUILD_TYPE_DIR)/lib/simple_compression.wasm.c $(WASM2C_BUILD_INCLUDES) -I  ../build_wasm_$(BUILD_TYPE_DIR)/lib/ $(UVWASI_LIB)
 
-../build_wasm_$(BUILD_TYPE_DIR)/lib/simple_decompression.wasm.c: simple_decompression.c
+../build_wasm_$(BUILD_TYPE_DIR)/lib/simple_decompression.wasm.c: simple_decompression.c ../build_wasm_$(BUILD_TYPE_DIR)/lib/libzstd.a
 	$(WASI_CC) $(BUILD_TYPE_FLAGS) $(WASI_CFLAGS) $(WASI_LDFLAGS) -o ../build_wasm_$(BUILD_TYPE_DIR)/lib/simple_decompression.wasm simple_decompression.c $(EXAMPLE_INCLUDES) -Wl,--whole-archive ../build_wasm_$(BUILD_TYPE_DIR)/lib/libzstd.a -Wl,--no-whole-archive
 	$(WASM2C_SRC_PATH)/build/wasm2c ../build_wasm_$(BUILD_TYPE_DIR)/lib/simple_decompression.wasm -o ../build_wasm_$(BUILD_TYPE_DIR)/lib/simple_decompression.wasm.c
 
@@ -123,3 +123,6 @@ test:
 	../build_wasm_$(BUILD_TYPE_DIR)/simple_compression ./ubuntu-22.04.3-desktop-amd64.iso
 	sleep 1
 	../build_wasm_$(BUILD_TYPE_DIR)/simple_decompression ./ubuntu-22.04.3-desktop-amd64.iso.zst
+
+clean:
+	rm -rf ../build_*
