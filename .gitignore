@@ -58,3 +58,4 @@ perf.data.old
 benchmark/ubuntu-22.04.3-desktop-amd64.iso
 deps/w*
 benchmark/wasi-sdk-20.0-linux.tar.gz
+benchmark/firefox-118.0.tar.bz2

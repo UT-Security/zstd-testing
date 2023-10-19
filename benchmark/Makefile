@@ -77,7 +77,7 @@ $(DEPS_PATH)/wasi-sdk/bin/clang:
 firefox-118.0.tar.bz2:
 	wget https://ftp.mozilla.org/pub/firefox/releases/118.0/linux-x86_64/en-US/firefox-118.0.tar.bz2
 
-deps: bootstrap $(DEPS_PATH)/wabt $(DEPS_PATH)/wasi-sdk/bin/clang ubuntu-22.04.3-desktop-amd64.iso
+deps: bootstrap $(DEPS_PATH)/wabt $(DEPS_PATH)/wasi-sdk/bin/clang firefox-118.0.tar.bz2
 	touch $@
 
 #####################################
@@ -147,19 +147,19 @@ build: ../build_wasm_$(BUILD_TYPE_DIR)/simple_decompression
 
 test:
 	sleep 1
-	../build_$(BUILD_TYPE_DIR)/simple_compression ./ubuntu-22.04.3-desktop-amd64.iso
+	../build_$(BUILD_TYPE_DIR)/simple_compression ./firefox-118.0.tar.bz2
 	sleep 1
-	../build_$(BUILD_TYPE_DIR)/simple_decompression ./ubuntu-22.04.3-desktop-amd64.iso.zst
-	rm ./ubuntu-22.04.3-desktop-amd64.iso.zst
+	../build_$(BUILD_TYPE_DIR)/simple_decompression ./firefox-118.0.tar.bz2.zst
+	rm ./firefox-118.0.tar.bz2.zst
 	sleep 1
-	../build_conly_$(BUILD_TYPE_DIR)/simple_compression ./ubuntu-22.04.3-desktop-amd64.iso
+	../build_conly_$(BUILD_TYPE_DIR)/simple_compression ./firefox-118.0.tar.bz2
 	sleep 1
-	../build_conly_$(BUILD_TYPE_DIR)/simple_decompression ./ubuntu-22.04.3-desktop-amd64.iso.zst
-	rm ./ubuntu-22.04.3-desktop-amd64.iso.zst
+	../build_conly_$(BUILD_TYPE_DIR)/simple_decompression ./firefox-118.0.tar.bz2.zst
+	rm ./firefox-118.0.tar.bz2.zst
 	sleep 1
-	../build_wasm_$(BUILD_TYPE_DIR)/simple_compression ./ubuntu-22.04.3-desktop-amd64.iso
+	../build_wasm_$(BUILD_TYPE_DIR)/simple_compression ./firefox-118.0.tar.bz2
 	sleep 1
-	../build_wasm_$(BUILD_TYPE_DIR)/simple_decompression ./ubuntu-22.04.3-desktop-amd64.iso.zst
+	../build_wasm_$(BUILD_TYPE_DIR)/simple_decompression ./firefox-118.0.tar.bz2.zst
 
 clean:
 	rm -rf ../build_*
