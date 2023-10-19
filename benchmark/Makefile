@@ -46,9 +46,9 @@ endif
 bootstrap:
 	echo "Bootstrapping"
 	if [ -x "$(shell command -v apt)" ]; then \
-		sudo apt install -y gcc g++ libc++-dev clang make cmake ninja-build python3 python3-dev python-is-python3 python3-pip;
+		sudo apt install -y gcc g++ libc++-dev clang make cmake ninja-build python3 python3-dev python-is-python3 python3-pip wget;
 	elif [ -x "$(shell command -v dnf)" ]; then \
-		sudo dnf install -y gcc g++ libcxx-devel clang make cmake ninja-build python3 python3-devel python-is-python3 python3-pip;
+		sudo dnf install -y gcc g++ libcxx-devel clang make cmake ninja-build python3 python3-devel python-is-python3 python3-pip wget;
 	else \
 		echo "Unknown installer. apt/dnf not found"; \
 		exit 1; \
@@ -74,8 +74,8 @@ $(DEPS_PATH)/wasi-sdk/bin/clang:
 		ln -s $(DEPS_PATH)/wasi-sdk-src/build/install/opt/wasi-sdk/ $(DEPS_PATH)/wasi-sdk; \
 	fi
 
-ubuntu-22.04.3-desktop-amd64.iso:
-	wget https://www.releases.ubuntu.com/jammy/ubuntu-22.04.3-desktop-amd64.iso
+firefox-118.0.tar.bz2:
+	wget https://ftp.mozilla.org/pub/firefox/releases/118.0/linux-x86_64/en-US/firefox-118.0.tar.bz2
 
 deps: bootstrap $(DEPS_PATH)/wabt $(DEPS_PATH)/wasi-sdk/bin/clang ubuntu-22.04.3-desktop-amd64.iso
 	touch $@
