@@ -67,7 +67,7 @@ large.tar.gz:
 	wget http://corpus.canterbury.ac.nz/resources/large.tar.gz
 
 $(DEPS_PATH)/wasi-sdk/bin/clang:
-	if [[ "$(shell uname -p)" == "x86_64" ]]; then \
+	if [[ "$(shell uname -p)" == "x86_64" ]] && [[ "$(shell expr substr $(uname -s) 1 5)" == "Linux" ]]; then \
 		$(MAKE) wasi-sdk-20.0-linux.tar.gz; \
 		mkdir -p $(DEPS_PATH)/wasi-sdk; \
 		tar -zxf ./wasi-sdk-20.0-linux.tar.gz -C $(DEPS_PATH)/wasi-sdk --strip-components 1; \
