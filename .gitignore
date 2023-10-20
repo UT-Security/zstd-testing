@@ -57,4 +57,6 @@ perf.data
 perf.data.old
 deps/w*
 benchmark/wasi-sdk-20.0-linux.tar.gz
-benchmark/test_file.txt
+benchmark/random_file.txt
+benchmark/large.tar.gz
+benchmark/canterbury_large/

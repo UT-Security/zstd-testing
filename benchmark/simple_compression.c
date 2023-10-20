@@ -45,7 +45,7 @@ static void compress_orDie(const char* fname, const char* oname)
     int64_t ns =  (nanos * (exit_time.tv_sec - enter_time.tv_sec))
         + ((int64_t)(exit_time.tv_nsec - enter_time.tv_nsec));
 
-    printf("ZLIB compression time: %lld\n", (long long) (ns / test_iterations));
+    printf("ZSTD compression time: %lld\n", (long long) (ns / test_iterations));
 
     saveFile_orDie(oname, cBuff, cSize);
 
